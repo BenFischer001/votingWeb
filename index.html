@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-firestore.js"></script>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+
+        <div class="content">
+
+                <form id="add-vote">
+                    
+                    <input type="text" name="name" placeholder="">
+                    <input type="text" name="name" placeholder="">
+                    <input type="text" name="name" placeholder="">
+                    <button>Add Vote</button>
+                </form>
+
+            <h1 id="theWinner"></h1>
+
+            <ul id = "voteList">
+                <li class = "human" id = "0" draggable="true" ondragenter="dragEnter(this)" ondragstart="dragStart(this)">A</li>
+                <li class = "human" id = "1" draggable="true" ondragenter="dragEnter(this)" ondragstart="dragStart(this)">B</li>
+                <li class = "human" id = "2" draggable="true" ondragenter="dragEnter(this)" ondragstart="dragStart(this)">C</li>
+            </ul>
+            <button onclick="addVote()">Add Vote</button>
+
+        </div>
+
+
+
+
+        <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyClBtlG1Ku6QaeyweklQKkExWslyU6VH_Y",
+            authDomain: "verticlslice.firebaseapp.com",
+            databaseURL: "https://verticlslice.firebaseio.com",
+            projectId: "verticlslice",
+            storageBucket: "verticlslice.appspot.com",
+            messagingSenderId: "39186497969",
+            appId: "1:39186497969:web:61ef0247b27e8ad4"
+        };
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+        db.settings({ timestampsInSnspshots: true });
+        </script>
+
+        <script src="app.js"></script>
+        
+    </body>
+</html>
