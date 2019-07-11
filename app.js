@@ -1,27 +1,43 @@
 const form = document.querySelector('#add-vote');
-//const vL = document.querySelector('#voteList');
-
-//const itemsch = document.querySelectorAll(".human");
-
-var holdName; // placeholder for switching vote order
-var placeNum; // gives ref to whitch place to switch
 
 var ul = document.getElementById("voteList");
 var items = ul.getElementsByTagName("li");
 
+
+// load candidates:
+db.collection('president').get().then(snapshot => {
+    var count = 0; // used to create refs of position
+    snapshot.docs.forEach(doc => { 
+        // create element atributes:
+        var li = document.createElement("li");
+        li.className = "human";
+        li.draggable = true;
+        var dEnter = "dragEnter(" + count + ")";
+        var dStart = "dragStart(" + count + ")";
+        li.setAttribute('ondragenter', dEnter, false);
+        li.setAttribute('ondragstart', dStart, false);
+        li.innerHTML = doc.data().name;
+
+        ul.appendChild(li); // add to doc
+
+        count++;
+    })
+})
+
+var holdName; // placeholder for switching vote order
+var placeNum; // gives ref to whitch place to switch
+
 //handels dragable list ordering
 function dragStart(thiis){
-    placeNum = parseInt(thiis.id);
+    placeNum = thiis;
 }
 
 //Switches positions, and resets ref position
-function dragEnter(thiis){
-    num = parseInt(thiis.id);
-    //console.log(items[num]);
+function dragEnter(num){
     holdName = items[num].innerHTML;
     items[num].innerHTML = items[placeNum].innerHTML;
     items[placeNum].innerHTML = holdName;
-    placeNum = parseInt(thiis.id);
+    placeNum = parseInt(num);
 }
 
 
@@ -44,7 +60,7 @@ db.collection('president').get().then(snapshot => {
 })
 
 
-//on submit 2.0
+//when vote is cast:
 function addVote() {
 
     var candidates1 = 3;
@@ -86,43 +102,9 @@ function addVote() {
 
 
 
-//on submit
-form.addEventListener('submit', (e) => {
-    e.preventDefault();
 
-    var candidates1 = 3;
-    var hitCan;  
-    var obj = {};
-    var key = "";
-    var it = 0;
-    var won = 1;
-    db.collection('president').get().then(snapshot => {
-        snapshot.docs.forEach(doc => {
-            hitCan = -1;
-            obj = {};
-            won = 1;
-            for (var i = 0, vote; vote = form[i++];) {
-                if(vote.value == doc.data().name){
-                    hitCan = 1;
-                }
-                else if(vote.value != ""){
-                    key = vote.value;
-                    obj[key] = doc.data().votes[vote.value] + hitCan;
-                    obj[key] = 0;
-                    if(doc.data().votes[vote.value] + hitCan < 1){
-                        won = -1;
-                    }
-                } //*/
-                
-            }
-            //console.log(doc.data().name);
-            //console.log(obj);
-            db.collection('president').doc(doc.id).update({
-                votes: obj,
-                won: won
-            })
-        })
-    })
-}) //*/
+
+
+
 
 
