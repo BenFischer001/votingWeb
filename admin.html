@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-firestore.js"></script>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+
+
+        <button onclick="hit()"> hitme</button>
+        <a href="index.html"> asdfasdf</a>
+
+
+        <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyClBtlG1Ku6QaeyweklQKkExWslyU6VH_Y",
+            authDomain: "verticlslice.firebaseapp.com",
+            databaseURL: "https://verticlslice.firebaseio.com",
+            projectId: "verticlslice",
+            storageBucket: "verticlslice.appspot.com",
+            messagingSenderId: "39186497969",
+            appId: "1:39186497969:web:61ef0247b27e8ad4"
+        };
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+        db.settings({ timestampsInSnspshots: true });
+        </script>
+        <script src="app.js"></script>
+        
+    </body>
+</html>
