@@ -3,28 +3,63 @@ const form = document.querySelector('#add-vote');
 var ul = document.getElementById("voteList");
 var items = ul.getElementsByTagName("li");
 
+var election;
+function loadUp(){
+    db.collection("init").doc("48stPUF65rVtTjnyUXDG").get().then(snapshot => {
+        election = snapshot.data().election;
+    }).then(function() {
+        // load candidates:
+        db.collection(election).get().then(snapshot => {
+            var count = 0; // used to create refs of position
+            snapshot.docs.forEach(doc => { 
+                // create element atributes:
+                var li = document.createElement("li");
+                li.className = "human";
+                li.draggable = true;
+                var dClick = "dClick(" + count + ")";
+                var dEnter = "dragEnter(" + count + ")";
+                var dStart = "dragStart(" + count + ")";
+                li.setAttribute('onclick', dClick, false);
+                li.setAttribute('ondragenter', dEnter, false);
+                li.setAttribute('ondragstart', dStart, false);
+                li.innerHTML = doc.data().name;
 
-// load candidates:
-db.collection('president').get().then(snapshot => {
-    var count = 0; // used to create refs of position
-    snapshot.docs.forEach(doc => { 
-        // create element atributes:
-        var li = document.createElement("li");
-        li.className = "human";
-        li.draggable = true;
-        var dClick = "dClick(" + count + ")";
-        var dEnter = "dragEnter(" + count + ")";
-        var dStart = "dragStart(" + count + ")";
-        li.setAttribute('onclick', dClick, false);
-        li.setAttribute('ondragenter', dEnter, false);
-        li.setAttribute('ondragstart', dStart, false);
-        li.innerHTML = doc.data().name;
+                ul.appendChild(li); // add to doc
 
-        ul.appendChild(li); // add to doc
+                count++;
+            })
+        })
+        
+    }).then(function(){
+        // create element & render
+        // getting data
+        db.collection(election).get().then(snapshot => {
+            var winner = "";
+            var max = 0;
 
-        count++;
+            snapshot.docs.forEach(doc => { 
+                if(doc.data().won > 0) {
+                    //console.log(winner);
+                    winner = doc.data().name; 
+                    max = -1}
+                if(doc.data().Pvote == max && max != -1){
+                    winner = "tie"
+                } else if(doc.data().Pvote > max && max != -1){
+                    max = doc.data().Pvote;
+                    winner = doc.data().name;
+                }
+            })
+
+            let h1 = document.createElement('h1');
+            let win = document.createElement('span');
+            win.textContent = winner;
+            h1.appendChild(win);
+            theWinner.appendChild(h1);
+            
+        })
     })
-})
+} //*/
+
 
 var holdName; // placeholder for switching vote order
 var placeNum; // gives ref to whitch place to switch
@@ -59,32 +94,7 @@ function dragEnter(num){
 }
 
 
-// create element & render
-// getting data
-db.collection('president').get().then(snapshot => {
-    var winner = "";
-    var max = 0;
 
-    snapshot.docs.forEach(doc => { 
-        if(doc.data().won > 0) {
-            //console.log(winner);
-            winner = doc.data().name; 
-            max = -1}
-        if(doc.data().Pvote == max && max != -1){
-            winner = "tie"
-        } else if(doc.data().Pvote > max && max != -1){
-            max = doc.data().Pvote;
-            winner = doc.data().name;
-        }
-    })
-
-    let h1 = document.createElement('h1');
-    let win = document.createElement('span');
-    win.textContent = winner;
-    h1.appendChild(win);
-    theWinner.appendChild(h1);
-    
-})
 
 
 //when vote is cast:
@@ -96,7 +106,7 @@ function addVote() {
     var key = "";
     var it = 0;
     var won = 1;
-    db.collection('president').get().then(snapshot => {
+    db.collection(election).get().then(snapshot => {
         snapshot.docs.forEach(doc => { 
             hitCan = -1;
             obj = {};
@@ -126,7 +136,7 @@ function addVote() {
 
 
 
-            db.collection('president').doc(doc.id).update({
+            db.collection(election).doc(doc.id).update({
                 votes: obj,
                 won: won,
                 Pvote: Pvote
@@ -140,6 +150,16 @@ function addVote() {
 
 
 
+
+
+// ----------------------------------------------------admin.js ---------------------------------------------------------
+
+function hit(){
+    newE = "president"
+    db.collection("init").doc("48stPUF65rVtTjnyUXDG").set({
+        election: newE
+    })
+}
 
 
 
