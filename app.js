@@ -1,12 +1,18 @@
-const form = document.querySelector('#add-vote');
-
-var ul = document.getElementById("voteList");
-var items = ul.getElementsByTagName("li");
-
 var election;
-function loadUp(){
+
+const form = document.querySelector('#add-vote');
+var ul;
+var items;
+
+function loadindex(){
+
+    
+    ul = document.getElementById("voteList");
+    items = ul.getElementsByTagName("li");
+
     db.collection("init").doc("48stPUF65rVtTjnyUXDG").get().then(snapshot => {
         election = snapshot.data().election;
+        console.log(election)
     }).then(function() {
         // load candidates:
         db.collection(election).get().then(snapshot => {
@@ -29,7 +35,7 @@ function loadUp(){
                 count++;
             })
         })
-        
+
     }).then(function(){
         // create element & render
         // getting data
@@ -59,6 +65,9 @@ function loadUp(){
         })
     })
 } //*/
+
+
+
 
 
 var holdName; // placeholder for switching vote order
@@ -152,15 +161,101 @@ function addVote() {
 
 
 
-// ----------------------------------------------------admin.js ---------------------------------------------------------
+// ----------------------------------------------------admin.js---------------------------------------------------------
 
+function loadadmin(){
+    console.log(document.getElementById("election").value)
+}
+
+
+
+//changes what election is running
 function hit(){
-    newE = "president"
+
+    var newE = document.getElementById("sElec").value;
+    //newE = "president"
     db.collection("init").doc("48stPUF65rVtTjnyUXDG").set({
         election: newE
     })
 }
 
+//adds candidate to an election
+function addCandidit() {
+    var candidate = document.getElementById("candidate").value;;
+    var election = document.getElementById("election").value;
+
+    db.collection(election).get().then(snapshot => {
+        var obj = {};
+        var votes = {};
+        snapshot.docs.forEach(doc => { 
+            votes[doc.data().name] = 0;
+            obj = doc.data().votes;
+            obj[candidate] = 0;
+
+            db.collection(election).doc(doc.id).update({
+                votes: obj
+            })         
+        })
+        db.collection(election).doc().set({
+            votes: votes,
+            won: 0,
+            Pvote: 0,
+            name: candidate
+        })   
+    })
+}
+
+//reset election
+function reSet() {
+    var election = document.getElementById("sElec").value;
+
+    db.collection(election).get().then(snapshot => {
+        snapshot.docs.forEach(doc => { 
+            var obj = doc.data().votes;
+            Object.keys(obj).forEach(function (item) {
+                obj[item] = 0;
+            });   
+            console.log(obj);
+            db.collection(election).doc(doc.id).update({
+                votes: obj,
+                won: 0,
+                Pvote: 0
+            })   
+
+        })   
+    })
+}
+
+//removes candidates
+function remCan(){
+    var election = document.getElementById("election").value;
+    var candidate = document.getElementById("candidate").value;
+
+    db.collection(election).get().then(snapshot => {
+        snapshot.docs.forEach(doc => {
+            if(doc.data().name != candidate){
+                var obj = doc.data().votes;
+            
+                delete obj[candidate];
+                console.log(obj);
+                db.collection(election).doc(doc.id).update({
+                    votes: obj
+                })
+            } else{
+                db.collection(election).doc(doc.id).delete();
+            }
+        })   
+    })
+}
+
+function addElection(){
+    var election = document.getElementById("sElec").value;
+    db.collection(election).doc().set({
+        name: "init"
+    });
+    console.log("hi")
+
+}
 
 
 
