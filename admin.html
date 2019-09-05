@@ -4,10 +4,28 @@
         <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-firestore.js"></script>
         <link rel="stylesheet" href="styles.css">
     </head>
-    <body>
+    <body onload = "loadadmin()">
+
+        <h1>Change election:</h1>
+        <form onsubmit = "">
+            <input type="text" id = "sElec" autocomplete="off">
+        </form>
+        <button onclick="hit()">change election</button> <button onclick="reSet()">reset election</button>
+        <button onclick="addElection()">Add election</button>
+
+        <h1>Stuff:</h1>
+        <form onsubmit = "">
+            <h2>Candidate:</h2>
+            <input type="text" id = "candidate" autocomplete="off">
+            <h2>Election:</h2>
+            <input type="text" id = "election" autocomplete="off">
+        </form>
+
+        <button onclick="addCandidit()">Add candidate</button> <button onclick="remCan()">remove candidate</button>
 
 
-        <button onclick="hit()"> hitme</button>
+
+
         <a href="index.html"> asdfasdf</a>
 
 
