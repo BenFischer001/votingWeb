@@ -4,8 +4,10 @@ const form = document.querySelector('#add-vote');
 var ul;
 var items;
 
+// preforms loading functions
 function loadindex(){
 
+	console.log("Hello thereS");
     
     ul = document.getElementById("voteList");
     items = ul.getElementsByTagName("li");
