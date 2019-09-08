@@ -1,22 +1,20 @@
-var election;
+var election; //election acts as a pointer to the curently running election
 
 const form = document.querySelector('#add-vote');
 var ul;
 var items;
 
-// preforms loading functions
+// preforms loading functions for main page
 function loadindex(){
-
-	console.log("Hello thereS");
-    
     ul = document.getElementById("voteList");
-    items = ul.getElementsByTagName("li");
+    items = ul.getElementsByTagName("li"); 
 
-    db.collection("init").doc("48stPUF65rVtTjnyUXDG").get().then(snapshot => {
+
+    db.collection("init").doc("48stPUF65rVtTjnyUXDG").get().then(snapshot => { //gets a snapshot of items in a document
         election = snapshot.data().election;
-        console.log(election)
+
     }).then(function() {
-        // load candidates:
+        // load candidates to webpage:
         db.collection(election).get().then(snapshot => {
             var count = 0; // used to create refs of position
             snapshot.docs.forEach(doc => { 
@@ -39,25 +37,23 @@ function loadindex(){
         })
 
     }).then(function(){
-        // create element & render
-        // getting data
+        // Calculates winner:
         db.collection(election).get().then(snapshot => {
             var winner = "";
             var max = 0;
 
             snapshot.docs.forEach(doc => { 
-                if(doc.data().won > 0) {
-                    //console.log(winner);
+                if(doc.data().won > 0) { // if there is a winner stop max=-1 stops other if statments
                     winner = doc.data().name; 
                     max = -1}
-                if(doc.data().Pvote == max && max != -1){
+                if(doc.data().Pvote == max && max != -1){ 
                     winner = "tie"
-                } else if(doc.data().Pvote > max && max != -1){
+                } else if(doc.data().Pvote > max && max != -1){ 
                     max = doc.data().Pvote;
                     winner = doc.data().name;
                 }
             })
-
+            // write winner to page:
             let h1 = document.createElement('h1');
             let win = document.createElement('span');
             win.textContent = winner;
@@ -75,22 +71,21 @@ function loadindex(){
 var holdName; // placeholder for switching vote order
 var placeNum; // gives ref to whitch place to switch
 
-//use double click to set majoraty vote
+//use click to set majoraty vote:
 function dClick(num){
     if(document.getElementsByClassName("human")[num].style.color == "rgb(0, 0, 0)"){
         document.getElementsByClassName("human")[num].style.color = "rgb(140,140,140)";
     } else {
         document.getElementsByClassName("human")[num].style.color = "rgb(0, 0, 0)";
     }
-    //items[num].style.color = blue;
 } //*/
 
-//handels dragable list ordering
+//handels dragable list ordering:
 function dragStart(num){
     placeNum = num;
 }
 
-//Switches positions, and resets ref position
+//Switches positions, and resets ref position:
 function dragEnter(num){
     holdName = items[num].innerHTML;
     holdColor = items[num].style.color;
@@ -125,15 +120,14 @@ function addVote() {
             won = 1;
             for (var i = 0; items.length > i; i++) {
 
-                if(items[i].innerHTML == doc.data().name){
-                    //console.log(vote.value);
+                if(items[i].innerHTML == doc.data().name){ // names above --1, and below ++1
                     hitCan = 1;
 
-                    if(items[i].style.color == "rgb(0, 0, 0)"){
+                    if(items[i].style.color == "rgb(0, 0, 0)"){ // used to calculate popular vote
                         Pvote += 1;
                     } 
                 }
-                else if(items[i].innerHTML != ""){
+                else if(items[i].innerHTML != ""){ // if you win all elections you are a winner
                     key = items[i].innerHTML;
                     obj[key] = doc.data().votes[items[i].innerHTML] + hitCan;
                     if(doc.data().votes[items[i].innerHTML] + hitCan < 1){
@@ -142,17 +136,12 @@ function addVote() {
                 }
     
             }
-            //console.log(doc.data().name);
-            //console.log(obj);
 
-
-
-            db.collection(election).doc(doc.id).update({
+            db.collection(election).doc(doc.id).update({ // update the document
                 votes: obj,
                 won: won,
                 Pvote: Pvote
             })
-            //console.log(doc.data().votes);
         })
     })
 } //*/
@@ -166,16 +155,16 @@ function addVote() {
 // ----------------------------------------------------admin.js---------------------------------------------------------
 
 function loadadmin(){
-    console.log(document.getElementById("election").value)
+    
 }
 
 
 
-//changes what election is running
-function hit(){
 
+
+//changes what election is running:
+function hit(){
     var newE = document.getElementById("sElec").value;
-    //newE = "president"
     db.collection("init").doc("48stPUF65rVtTjnyUXDG").set({
         election: newE
     })
@@ -189,6 +178,7 @@ function addCandidit() {
     db.collection(election).get().then(snapshot => {
         var obj = {};
         var votes = {};
+        // adds candidat to other docs:
         snapshot.docs.forEach(doc => { 
             votes[doc.data().name] = 0;
             obj = doc.data().votes;
@@ -198,7 +188,8 @@ function addCandidit() {
                 votes: obj
             })         
         })
-        db.collection(election).doc().set({
+        // creates candidate doc:
+        db.collection(election).doc().set({  
             votes: votes,
             won: 0,
             Pvote: 0,
@@ -207,7 +198,7 @@ function addCandidit() {
     })
 }
 
-//reset election
+//reset election:
 function reSet() {
     var election = document.getElementById("sElec").value;
 
@@ -215,7 +206,7 @@ function reSet() {
         snapshot.docs.forEach(doc => { 
             var obj = doc.data().votes;
             Object.keys(obj).forEach(function (item) {
-                obj[item] = 0;
+                obj[item] = 0; // sets each mini election to 0
             });   
             console.log(obj);
             db.collection(election).doc(doc.id).update({
