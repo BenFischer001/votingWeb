@@ -1,6 +1,25 @@
 #voteList{
-    color: blue
+    color: white;
+    list-style: none;
+    
 }
+
+
 .human{
-    cursor: row-resize
+    cursor: row-resize;
+    border: solid;
+    color: rgb(140, 140, 140);
+}
+
+body{
+    background-color: rgb(190, 185, 177);
+}
+
+.content{
+    width: 33%;
+    margin: auto;
+    margin-top: 10%;
+    word-wrap: break-word;
+    border: dashed;
+    border-color: red;
 }
